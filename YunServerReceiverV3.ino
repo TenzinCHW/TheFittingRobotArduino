@@ -93,14 +93,15 @@ void process(BridgeClient client) {
 void sendinstructions(String theinstructions) {
   int ArduinoNum;
   //  String commands;
+  Serial.println(theinstructions);
   if (theinstructions.substring(0, 5) == "slave") {
     Serial.println("Sending!");
-    if (isDigit(theinstructions.charAt(6))) {
+    if (isDigit(theinstructions.charAt(6))) {  // If it is a double digit number
       Serial.println("Sending to ");
       ArduinoNum = theinstructions.substring(5, 7).toInt(); // Get the number of the Slave you want to put to work
       Serial.println(ArduinoNum);
       char commands[theinstructions.length() - 7];
-      theinstructions.substring(8).toCharArray(commands, theinstructions.length() - 7);  // char arrays need one extra char slot for the null char in C
+      theinstructions.substring(8).toCharArray(commands, theinstructions.length() - 7);  // need three extra slots, two for the "\r\n" and one for the null char in C
       //      commands = theinstructions.substring(8);  // Slice the string to get just the commands
       Serial.println("Sending " + (String)commands);
       Wire.beginTransmission(ArduinoNum);
