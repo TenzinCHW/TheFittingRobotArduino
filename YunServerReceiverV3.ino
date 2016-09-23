@@ -92,60 +92,67 @@ void process(BridgeClient client) {
 
 void sendinstructions(String theinstructions) {
   int ArduinoNum;
-  String commands;
+  //  String commands;
   if (theinstructions.substring(0, 5) == "slave") {
     Serial.println("Sending!");
     if (isDigit(theinstructions.charAt(6))) {
       Serial.println("Sending to ");
       ArduinoNum = theinstructions.substring(5, 7).toInt(); // Get the number of the Slave you want to put to work
       Serial.println(ArduinoNum);
-      commands = theinstructions.substring(8);  // Slice the string to get just the commands
+      char commands[theinstructions.length() - 8];
+      theinstructions.substring(8).toCharArray(commands, theinstructions.length() - 8);
+      //      commands = theinstructions.substring(8);  // Slice the string to get just the commands
+      Serial.println("Sending " + (String)commands);
+      Wire.beginTransmission(ArduinoNum);
+      Wire.write(commands);
+      Wire.endTransmission();
     }
     else {
       Serial.println("Sending to ");
       ArduinoNum = theinstructions.substring(5, 6).toInt(); // Get the number of the Slave you want to put to work
       Serial.println(ArduinoNum);
-      commands = theinstructions.substring(7);  // Slice the string to get just the commands
+      char commands[theinstructions.length() - 7];
+      theinstructions.substring(8).toCharArray(commands, theinstructions.length() - 7);
+      //      commands = theinstructions.substring(7);  // Slice the string to get just the commands
+      Serial.println("Sending " + (String)commands);
+      Wire.beginTransmission(ArduinoNum);
+      Wire.write(commands);
+      Wire.endTransmission();
     }
-    Serial.println("Sending " + commands);
-    Wire.beginTransmission(ArduinoNum); // Begin transmitting
-    for (int i = 0; i < commands.length(); i++) {
-      Wire.write(commands.charAt(i));  // Send the commands
-    }
-    Wire.endTransmission();  // Stop transmitting
+//    Serial.println("Sending " + commands);
+//    Wire.beginTransmission(ArduinoNum); // Begin transmitting
+//    Wire.write(commands);
+    //    for (int i = 0; i < commands.length(); i++) {
+    //      Wire.write(commands.charAt(i));  // Send the commands
+    //    }
+//    Wire.endTransmission();  // Stop transmitting
     delay(5000);
   }
   else {
-    commands = theinstructions.substring(7);
+    String commands = theinstructions.substring(7);
     parseinstructions(commands);
   }
 }
 
 void parseinstructions(String instructions) {  // Parser function for each arduino that has already received instructions
-  String dir = instructions.substring(0, 19); // String containing the direction of the 4 motors
+  String dir = instructions.substring(0, 4); // String containing the direction of the 4 motors
   int steps[4];  // Array containing the number of steps of the 4 motors
   bool atstep = false;  // Flag to tell parser if it has reached the steps instructions
   int indice = 0;  // Indice of the array that the parser will add the next instruction to
   int i = 5;  // Indice of the instructions that the parser will start reading from
   int j;
-  Serial.println("Parsing!");
-  if (instructions == "calibrate") {
-    calibrate();
-  }
-  else {
-    do {
-      j = i;
-      String numSteps = "";
-      while (isDigit(instructions.charAt(j))) {  // Loop through the string from i until the next comma
-        numSteps += instructions.charAt(j);
-        j++;
-      }
-      steps[indice] = numSteps.toInt();  // Add it to the steps array
-      indice++;  // Increase indice so the next instruction is added to the next indice
-      i = j + 1;  // Increase the indice at which the parser will start from in the next loop
-    } while (i < instructions.length());  // Ensure that you have not reached the end of the string of instructions
-    execute(dir, steps);  // Call the executing function
-  }
+  do {
+    j = i;
+    String numSteps = "";
+    while (isDigit(instructions.charAt(j))) {  // Loop through the string from i until the next comma
+      numSteps += instructions.charAt(j);
+      j++;
+    }
+    steps[indice] = numSteps.toInt();  // Add it to the steps array
+    indice++;  // Increase indice so the next instruction is added to the next indice
+    i = j + 1;  // Increase the indice at which the parser will start from in the next loop
+  } while (i < instructions.length());  // Ensure that you have not reached the end of the string of instructions
+  execute(dir, steps);  // Call the executing function
 }
 
 void execute(String dir, int steps[4]) {  // Executing function to ensure that the motors take turns to step
