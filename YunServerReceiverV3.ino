@@ -99,8 +99,8 @@ void sendinstructions(String theinstructions) {
       Serial.println("Sending to ");
       ArduinoNum = theinstructions.substring(5, 7).toInt(); // Get the number of the Slave you want to put to work
       Serial.println(ArduinoNum);
-      char commands[theinstructions.length() - 8];
-      theinstructions.substring(8).toCharArray(commands, theinstructions.length() - 8);
+      char commands[theinstructions.length() - 7];
+      theinstructions.substring(8).toCharArray(commands, theinstructions.length() - 7);  // char arrays need one extra char slot for the null char in C
       //      commands = theinstructions.substring(8);  // Slice the string to get just the commands
       Serial.println("Sending " + (String)commands);
       Wire.beginTransmission(ArduinoNum);
@@ -111,8 +111,8 @@ void sendinstructions(String theinstructions) {
       Serial.println("Sending to ");
       ArduinoNum = theinstructions.substring(5, 6).toInt(); // Get the number of the Slave you want to put to work
       Serial.println(ArduinoNum);
-      char commands[theinstructions.length() - 7];
-      theinstructions.substring(8).toCharArray(commands, theinstructions.length() - 7);
+      char commands[theinstructions.length() - 6];
+      theinstructions.substring(7).toCharArray(commands, theinstructions.length() - 6);
       //      commands = theinstructions.substring(7);  // Slice the string to get just the commands
       Serial.println("Sending " + (String)commands);
       Wire.beginTransmission(ArduinoNum);

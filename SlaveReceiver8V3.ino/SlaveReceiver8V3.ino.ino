@@ -23,7 +23,7 @@ void loop() {
 }
 
 void receiveEvent(int howMany) {
-  String instructions = "";
+  String instructions;
   while (Wire.available() > 0) {
     char newitem = Wire.read();
     instructions += newitem;
