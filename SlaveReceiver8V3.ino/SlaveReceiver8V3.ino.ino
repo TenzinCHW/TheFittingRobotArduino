@@ -26,10 +26,10 @@ void receiveEvent(int howMany) {
   String instructions;
   while (Wire.available() > 0) {
     char newitem = Wire.read();
+    Serial.print(newitem);
     instructions += newitem;
-    Serial.println(newitem);
   }
-  Serial.println(instructions);
+//  Serial.println(instructions);
   parseinstructions(instructions);
 }
 

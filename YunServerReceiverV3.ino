@@ -74,7 +74,7 @@ void process(BridgeClient client) {
       sendinstructions("slave" + (String)i + "/calibrate");
       delay(1500);
     }
-    calibrate();  // Calibrate master's motors
+    //    calibrate();  // Calibrate master's motors
   }
   else {
     for (int i = 0; i < instructions.length() - 2; i++) {
@@ -91,7 +91,7 @@ void process(BridgeClient client) {
 
 void sendinstructions(String theinstructions) {
   int ArduinoNum;
-  //  String commands;
+  String commands;
   Serial.println(theinstructions);
   if (theinstructions.substring(0, 5) == "slave") {
     Serial.println("Sending!");
@@ -99,33 +99,32 @@ void sendinstructions(String theinstructions) {
       Serial.println("Sending to ");
       ArduinoNum = theinstructions.substring(5, 7).toInt(); // Get the number of the Slave you want to put to work
       Serial.println(ArduinoNum);
-      char commands[theinstructions.length()+2];
-      theinstructions.substring(8).toCharArray(commands, theinstructions.length()+2);
-      //      commands = theinstructions.substring(8);  // Slice the string to get just the commands
-      Serial.println("Sending " + (String)commands);
-      Wire.beginTransmission(ArduinoNum);
-      Wire.write(commands);
-      Wire.endTransmission();
+      commands = theinstructions.substring(8);  // Slice the string to get just the commands
+      //      char commands[theinstructions.length()+2];
+      //      theinstructions.substring(8).toCharArray(commands, theinstructions.length()+2);
+      //      Serial.println("Sending " + (String)commands);
+      //      Wire.beginTransmission(ArduinoNum);
+      //      Wire.write(commands);
+      //      Wire.endTransmission();
     }
     else {
       Serial.println("Sending to ");
       ArduinoNum = theinstructions.substring(5, 6).toInt(); // Get the number of the Slave you want to put to work
       Serial.println(ArduinoNum);
-      char commands[theinstructions.length()+2];
-      theinstructions.substring(7).toCharArray(commands, theinstructions.length()+2);
-      //      commands = theinstructions.substring(7);  // Slice the string to get just the commands
-      Serial.println("Sending " + (String)commands);
-      Wire.beginTransmission(ArduinoNum);
-      Wire.write(commands);
-      Wire.endTransmission();
+      commands = theinstructions.substring(7);  // Slice the string to get just the commands
+      //      char commands[theinstructions.length()+2];
+      //      theinstructions.substring(7).toCharArray(commands, theinstructions.length()+2);
+      //      Serial.println("Sending " + (String)commands);
+      //      Wire.beginTransmission(ArduinoNum);
+      //      Wire.write(commands);
+      //      Wire.endTransmission();
     }
-//    Serial.println("Sending " + commands);
-//    Wire.beginTransmission(ArduinoNum); // Begin transmitting
-//    Wire.write(commands);
-    //    for (int i = 0; i < commands.length(); i++) {
-    //      Wire.write(commands.charAt(i));  // Send the commands
-    //    }
-//    Wire.endTransmission();  // Stop transmitting
+    Serial.println("Sending " + commands);
+    Wire.beginTransmission(ArduinoNum); // Begin transmitting
+    for (int i = 0; i < commands.length(); i++) {
+      Wire.write(commands.charAt(i));  // Send the commands
+    }
+    Wire.endTransmission();  // Stop transmitting
     delay(5000);
   }
   else {
@@ -178,19 +177,19 @@ void stepper(int dir, int motornum) {
   delay(0.5);
 }
 
-void calibrate() {
-  digitalWrite(12, HIGH);
-  for (int j = 0; j < 300; j++) {
-    for (int i = 1; i < 5; i++) { // Loop through each motor
-      stepper(1, i);  // Step the motor backwards (Todo check the direction of real stepper motor)
-    }
-  }
-  for (int j = 0; j < 300; j++) {
-    for (int i = 1; i < 5; i++) { // Loop through each motor
-      stepper(0, i);  // Step the motor backwards (Todo check the direction of real stepper motor)
-    }
-  }
-  digitalWrite(12, LOW);
-  delay(100);
-}
+//void calibrate() {
+//  digitalWrite(12, HIGH);
+//  for (int j = 0; j < 300; j++) {
+//    for (int i = 1; i < 5; i++) { // Loop through each motor
+//      stepper(1, i);  // Step the motor backwards (Todo check the direction of real stepper motor)
+//    }
+//  }
+//  for (int j = 0; j < 300; j++) {
+//    for (int i = 1; i < 5; i++) { // Loop through each motor
+//      stepper(0, i);  // Step the motor backwards (Todo check the direction of real stepper motor)
+//    }
+//  }
+//  digitalWrite(12, LOW);
+//  delay(100);
+//}
 
