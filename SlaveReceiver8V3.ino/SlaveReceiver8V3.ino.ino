@@ -27,6 +27,7 @@ void receiveEvent(int howMany) {
   while (Wire.available() > 0) {
     char newitem = Wire.read();
     instructions += newitem;
+    Serial.println(newitem);
   }
   Serial.println(instructions);
   parseinstructions(instructions);

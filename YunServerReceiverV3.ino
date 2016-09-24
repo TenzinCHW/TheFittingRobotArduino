@@ -61,9 +61,9 @@ void loop() {
   if (client) {  // Process request
     process(client);  // Close connection and free resources.
     client.stop();
+    Serial.println("Completed processing of client and restarting to prevent Error 500 on Bridge.");
   }
   delay(50);
-  Serial.println("Completed processing of client and restarting to prevent Error 500 on Bridge.");
 }
 
 void process(BridgeClient client) {
@@ -178,19 +178,19 @@ void stepper(int dir, int motornum) {
   delay(0.5);
 }
 
-//void calibrate() {
-//  digitalWrite(12, HIGH);
-//  for (int j = 0; j < 300; j++) {
-//    for (int i = 1; i < 5; i++) { // Loop through each motor
-//      stepper(1, i);  // Step the motor backwards (Todo check the direction of real stepper motor)
-//    }
-//  }
-//  for (int j = 0; j < 300; j++) {
-//    for (int i = 1; i < 5; i++) { // Loop through each motor
-//      stepper(0, i);  // Step the motor backwards (Todo check the direction of real stepper motor)
-//    }
-//  }
-//  digitalWrite(12, LOW);
-//  delay(100);
-//}
+void calibrate() {
+  digitalWrite(12, HIGH);
+  for (int j = 0; j < 300; j++) {
+    for (int i = 1; i < 5; i++) { // Loop through each motor
+      stepper(1, i);  // Step the motor backwards (Todo check the direction of real stepper motor)
+    }
+  }
+  for (int j = 0; j < 300; j++) {
+    for (int i = 1; i < 5; i++) { // Loop through each motor
+      stepper(0, i);  // Step the motor backwards (Todo check the direction of real stepper motor)
+    }
+  }
+  digitalWrite(12, LOW);
+  delay(100);
+}
 
