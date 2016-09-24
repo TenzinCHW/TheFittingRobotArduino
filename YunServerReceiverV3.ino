@@ -45,7 +45,6 @@ void setup() {
     pinMode(2 + 2 * motornum, OUTPUT); // Set direction pin as output. Direction pin = motornumber * 2
     pinMode(2 + 2 * motornum + 1, OUTPUT); // Set motor pin as output. Motor pin = motornumber * 2 + 1
   }
-  digitalWrite(12, LOW);
   // Listen for incoming connection only from localhost
   // (no one from the external network could connect)
   server.listenOnLocalhost();
@@ -158,10 +157,9 @@ void parseinstructions(String instructions) {  // Parser function for each ardui
 
 void execute(String dir, int steps[4]) {  // Executing function to ensure that the motors take turns to step
   int sumofsteps;  // Initialize var for num of steps
-  digitalWrite(12, HIGH);
   do {
     sumofsteps = 0;  // Set total number of steps left to 0
-    for (int i = 0; i < 5; i++) {  // Loop through each motor
+    for (int i = 0; i < 4; i++) {  // Loop through each motor
       if (steps[i] > 0) { // Make sure that the number of steps left for the motor is more than 0
         stepper(dir.substring(i, i + 1).toInt(), i + 1); // Step the motor once in the direction
         steps[i] -= 1;  // Reduce the number of steps for the motor by 1
@@ -169,31 +167,30 @@ void execute(String dir, int steps[4]) {  // Executing function to ensure that t
       }
     }
   } while (sumofsteps != 0);  // Make sure that the total number of steps left is not 0
-  digitalWrite(12, LOW);
   delay(100);
 }
 
 void stepper(int dir, int motornum) {
-  digitalWrite(2 + 2 * motornum, dir); // Set the direction
-  digitalWrite(2 + 2 * motornum + 1, 1); // Step the motor in the direction set
+  digitalWrite(2 * motornum, dir); // Set the direction
+  digitalWrite(2 * motornum + 1, HIGH); // Step the motor in the direction set
   delay(0.5);
-  digitalWrite(2 + 2 * motornum + 1, 0);
+  digitalWrite(2 * motornum + 1, LOW);
   delay(0.5);
 }
 
-void calibrate() {
-  digitalWrite(12, HIGH);
-  for (int j = 0; j < 300; j++) {
-    for (int i = 1; i < 5; i++) { // Loop through each motor
-      stepper(1, i);  // Step the motor backwards (Todo check the direction of real stepper motor)
-    }
-  }
-  for (int j = 0; j < 300; j++) {
-    for (int i = 1; i < 5; i++) { // Loop through each motor
-      stepper(0, i);  // Step the motor backwards (Todo check the direction of real stepper motor)
-    }
-  }
-  digitalWrite(12, LOW);
-  delay(100);
-}
+//void calibrate() {
+//  digitalWrite(12, HIGH);
+//  for (int j = 0; j < 300; j++) {
+//    for (int i = 1; i < 5; i++) { // Loop through each motor
+//      stepper(1, i);  // Step the motor backwards (Todo check the direction of real stepper motor)
+//    }
+//  }
+//  for (int j = 0; j < 300; j++) {
+//    for (int i = 1; i < 5; i++) { // Loop through each motor
+//      stepper(0, i);  // Step the motor backwards (Todo check the direction of real stepper motor)
+//    }
+//  }
+//  digitalWrite(12, LOW);
+//  delay(100);
+//}
 

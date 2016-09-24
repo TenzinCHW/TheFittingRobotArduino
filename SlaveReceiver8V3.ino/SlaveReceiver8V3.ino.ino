@@ -56,11 +56,11 @@ void parseinstructions(String instructions) {  // Parser function for each ardui
 
 void execute(String dir, int steps[4]) {  // Executing function to ensure that the motors take turns to step
   int sumofsteps;  // Initialize var for num of steps
+  for (int i = 8; i < 12; i++) {
+    digitalWrite(i, HIGH);
+  }
   do {
     sumofsteps = 0;  // Set total number of steps left to 0
-    for (int i = 8; i < 12; i++) {
-      digitalWrite(i, HIGH);
-    }
     for (int i = 0; i < 4; i++) {  // Loop through each motor
       if (steps[i] > 0) { // Make sure that the number of steps left for the motor is more than 0
         stepper(dir.substring(i, i + 1).toInt(), i); // Step the motor once in the direction
