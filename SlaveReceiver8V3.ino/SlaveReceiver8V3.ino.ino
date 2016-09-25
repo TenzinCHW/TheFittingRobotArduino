@@ -4,7 +4,7 @@
 void setup() {
   Wire.begin(8);                // join i2c bus with address #8
   Wire.onReceive(receiveEvent); // register event
-  Serial.begin(9600);
+//  Serial.begin(9600);
   MCUSR = 0;  // clear out any flags of prior resets.
   for (int motornum = 0; motornum < 4; motornum++) {
     pinMode(2 * motornum, OUTPUT); // Set direction pin as output. Direction pin = motornumber * 2
@@ -15,7 +15,7 @@ void setup() {
   for (int i = 0; i < 4; i++) {
     digitalWrite(i + 8, LOW);
   }
-  Serial.println("Ready");
+//  Serial.println("Ready");
 }
 
 void loop() {
@@ -26,7 +26,7 @@ void receiveEvent(int howMany) {
   String instructions;
   while (Wire.available() > 0) {
     char newitem = Wire.read();
-    Serial.print(newitem);
+//    Serial.print(newitem);
     instructions += newitem;
   }
 //  Serial.println(instructions);
@@ -40,7 +40,7 @@ void parseinstructions(String instructions) {  // Parser function for each ardui
   int indice = 0;  // Indice of the array that the parser will add the next instruction to
   int i = 5;  // Indice of the instructions that the parser will start reading from
   int j;
-  Serial.println("Parsing!");
+//  Serial.println("Parsing!");
   do {
     j = i;
     String numSteps = "";
