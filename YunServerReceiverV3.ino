@@ -68,68 +68,54 @@ void loop() {
 
 void process(BridgeClient client) {
   String instructions = client.readString();
+  String instructionlist[5];
   String subinstructions = "";  // Initialize subinstructions to be used to send info to the slaves
-  if (instructions == "calibrate\r\n") { // Send the message to calibrate all Arduinos
-    for (int i = 8; i < 12; i++) {
-      sendinstructions("slave" + (String)i + "/calibrate");
-      delay(1500);
+  unsigned short int counter = 0;
+  for (int i = 0; i < instructions.length() - 2; i++) { // Loop through all but the \r\n characters
+    if (instructions.charAt(i) != 'c') { // As long as you have not reached the next slave's commands
+      subinstructions += instructions.charAt(i);  // Add on the characters at the ith index to the subinstructions
     }
-    //    calibrate();  // Calibrate master's motors
-  }
-  else {
-    for (int i = 0; i < instructions.length() - 2; i++) {
-      if (instructions.charAt(i) != 'c') { // As long as you have not reached the next slave's commands
-        subinstructions += instructions.charAt(i);  // Add on the characters at the ith index to the subinstructions
-      }
-      if (instructions.charAt(i) == 'c') {
-        sendinstructions(subinstructions);  // Call the sending function
-        subinstructions = "";  // Reset the subinstructions
-      }
+    else if (instructions.charAt(i) == 'c') {
+      instructionlist[counter] = subinstructions; // Append the subinstructions to the list of instructions
+      counter += 1;
+      subinstructions = "";  // Reset the subinstructions
     }
   }
+  sendinstructions(instructionlist);  // Call the sending function
 }
 
-void sendinstructions(String theinstructions) {
+void sendinstructions(String instructionlist[]) {
   int ArduinoNum;
-  String commands;
-  Serial.println(theinstructions);
-  if (theinstructions.substring(0, 5) == "slave") {
-    Serial.println("Sending!");
-    if (isDigit(theinstructions.charAt(6))) {  // If it is a double digit number
-      Serial.println("Sending to ");
-      ArduinoNum = theinstructions.substring(5, 7).toInt(); // Get the number of the Slave you want to put to work
-      Serial.println(ArduinoNum);
-      commands = theinstructions.substring(8);  // Slice the string to get just the commands
-      //      char commands[theinstructions.length()+2];
-      //      theinstructions.substring(8).toCharArray(commands, theinstructions.length()+2);
-      //      Serial.println("Sending " + (String)commands);
-      //      Wire.beginTransmission(ArduinoNum);
-      //      Wire.write(commands);
-      //      Wire.endTransmission();
+  String commands = "";
+  String theinstructions = "";
+  for (int i = 0; i < 5; i++) {
+    theinstructions = instructionlist[i];
+    if (theinstructions.substring(0, 5) == "slave") {
+      Serial.println("Sending!");
+      if (isDigit(theinstructions.charAt(6))) {  // If it is a double digit number
+        Serial.println("Sending to ");
+        ArduinoNum = theinstructions.substring(5, 7).toInt(); // Get the number of the Slave you want to put to work
+        Serial.println(ArduinoNum);
+        commands = theinstructions.substring(8);  // Slice the string to get just the commands
+      }
+      else {
+        Serial.println("Sending to ");
+        ArduinoNum = theinstructions.substring(5, 6).toInt(); // Get the number of the Slave you want to put to work
+        Serial.println(ArduinoNum);
+        commands = theinstructions.substring(7);  // Slice the string to get just the commands
+      }
+      Serial.println("Sending " + commands);
+      Wire.beginTransmission(ArduinoNum); // Begin transmitting
+      for (int i = 0; i < commands.length(); i++) {
+        Wire.write(commands.charAt(i));  // Send the commands
+      }
+      Wire.endTransmission();  // Stop transmitting
+      delay(5000);
     }
     else {
-      Serial.println("Sending to ");
-      ArduinoNum = theinstructions.substring(5, 6).toInt(); // Get the number of the Slave you want to put to work
-      Serial.println(ArduinoNum);
-      commands = theinstructions.substring(7);  // Slice the string to get just the commands
-      //      char commands[theinstructions.length()+2];
-      //      theinstructions.substring(7).toCharArray(commands, theinstructions.length()+2);
-      //      Serial.println("Sending " + (String)commands);
-      //      Wire.beginTransmission(ArduinoNum);
-      //      Wire.write(commands);
-      //      Wire.endTransmission();
+      commands = theinstructions.substring(7);
+      parseinstructions(commands);
     }
-    Serial.println("Sending " + commands);
-    Wire.beginTransmission(ArduinoNum); // Begin transmitting
-    for (int i = 0; i < commands.length(); i++) {
-      Wire.write(commands.charAt(i));  // Send the commands
-    }
-    Wire.endTransmission();  // Stop transmitting
-    delay(5000);
-  }
-  else {
-    String commands = theinstructions.substring(7);
-    parseinstructions(commands);
   }
 }
 
@@ -140,6 +126,7 @@ void parseinstructions(String instructions) {  // Parser function for each ardui
   int indice = 0;  // Indice of the array that the parser will add the next instruction to
   int i = 5;  // Indice of the instructions that the parser will start reading from
   int j;
+  Serial.println("Entered parsing");
   do {
     j = i;
     String numSteps = "";
@@ -155,6 +142,7 @@ void parseinstructions(String instructions) {  // Parser function for each ardui
 }
 
 void execute(String dir, int steps[4]) {  // Executing function to ensure that the motors take turns to step
+  Serial.println("Entered execution");
   int sumofsteps;  // Initialize var for num of steps
   do {
     sumofsteps = 0;  // Set total number of steps left to 0
@@ -171,9 +159,9 @@ void execute(String dir, int steps[4]) {  // Executing function to ensure that t
 
 void stepper(int dir, int motornum) {
   digitalWrite(2 * motornum, dir); // Set the direction
-  digitalWrite(2 * motornum+1, HIGH); // Step the motor in the direction set
+  digitalWrite(2 * motornum + 1, HIGH); // Step the motor in the direction set
   delay(0.5);
-  digitalWrite(2 * motornum+1, LOW);
+  digitalWrite(2 * motornum + 1, LOW);
   delay(0.5);
 }
 
