@@ -42,8 +42,8 @@ void setup() {
   Serial.begin(9600);
   Wire.begin();
   for (int motornum = 1; motornum < 6; motornum++) {
-    pinMode(2 + 2 * motornum, OUTPUT); // Set direction pin as output. Direction pin = motornumber * 2
-    pinMode(2 + 2 * motornum + 1, OUTPUT); // Set motor pin as output. Motor pin = motornumber * 2 + 1
+    pinMode(2 * motornum, OUTPUT); // Set direction pin as output. Direction pin = motornumber * 2
+    pinMode(2 * motornum + 1, OUTPUT); // Set motor pin as output. Motor pin = motornumber * 2 + 1
   }
   // Listen for incoming connection only from localhost
   // (no one from the external network could connect)
@@ -171,9 +171,9 @@ void execute(String dir, int steps[4]) {  // Executing function to ensure that t
 
 void stepper(int dir, int motornum) {
   digitalWrite(2 * motornum, dir); // Set the direction
-  digitalWrite(2 * motornum + 1, HIGH); // Step the motor in the direction set
+  digitalWrite(2 * motornum+1, HIGH); // Step the motor in the direction set
   delay(0.5);
-  digitalWrite(2 * motornum + 1, LOW);
+  digitalWrite(2 * motornum+1, LOW);
   delay(0.5);
 }
 

@@ -2,18 +2,15 @@
 #include <avr/wdt.h>
 
 void setup() {
-  Wire.begin(8);                // join i2c bus with address #8
+  Wire.begin(10);                // join i2c bus with address #8
   Wire.onReceive(receiveEvent); // register event
 //  Serial.begin(9600);
   MCUSR = 0;  // clear out any flags of prior resets.
-  for (int motornum = 0; motornum < 4; motornum++) {
-    pinMode(2 * motornum, OUTPUT); // Set direction pin as output. Direction pin = motornumber * 2
-    pinMode(2 * motornum + 1, OUTPUT); // Set motor pin as output. Motor pin = motornumber * 2 + 1
-    pinMode(motornum + 8, OUTPUT);
-    digitalWrite(motornum + 8, 0);
+  for (int pin = 0; pin < 12; pin++) {
+    pinMode(pin, OUTPUT); // Set direction and motor pin as output. Direction pin = pin * 2, Motor pin = pin * 2 + 1
   }
-  for (int i = 0; i < 4; i++) {
-    digitalWrite(i + 8, LOW);
+  for (int i = 8; i < 12; i++) {
+    digitalWrite(i, LOW);
   }
 //  Serial.println("Ready");
 }
@@ -79,6 +76,7 @@ void execute(String dir, int steps[4]) {  // Executing function to ensure that t
 void stepper(int dir, int motornum) {
   digitalWrite(2 * motornum, dir); // Set the direction
   digitalWrite(2 * motornum + 1, HIGH); // Step the motor in the direction set
+  delay(10);
   digitalWrite(2 * motornum + 1, LOW);
   delay(10);
 }
