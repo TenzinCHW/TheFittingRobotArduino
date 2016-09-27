@@ -85,28 +85,36 @@ void process(BridgeClient client) {
 }
 
 void sendinstructions(String instructionlist[]) {
-  int ArduinoNum;
   String commands = "";
   String theinstructions = "";
-  for (int i = 6; i < 11; i++) {
-    theinstructions = instructionlist[i-6];
+  for (int i = 0; i < 5; i++) {
+    theinstructions = instructionlist[i];
     if (theinstructions.substring(0, 5) == "slave") {
       Serial.println("Sending!");
-      if (i>9) {  // If it is a double digit slave number
-        Serial.println("Sending to " + (String)i);
-        commands = theinstructions.substring(8);  // Slice the string to get just the commands
-      }
-      else {
-        Serial.println("Sending to " + (String)i);
-        commands = theinstructions.substring(7);  // Slice the string to get just the commands
-      }
+      Serial.println("Sending to " + (String)i);
+      commands = theinstructions.substring(5);  // Slice the string to get just the commands
       Serial.println("Sending " + commands);
-      Wire.beginTransmission(i); // Begin transmitting
-      for (int j = 0; j < commands.length(); j++) {
-        Wire.write(commands.charAt(j));  // Send the commands
+      if (i == 0 || i == 1) {
+        Wire.beginTransmission(8); // Begin transmitting
+        for (int j = 0; j < commands.length(); j++) {
+          Wire.write(commands.charAt(j));  // Send the commands
+        }
+        Wire.endTransmission();  // Stop transmitting
+
+//        theinstructions = instructionlist[i+1];
+//        Wire.beginTransmission(8);
+//        for (int j = 0; j < commands.length(); j++) {
+//          Wire.write(commands.charAt(j));  // Send the commands
+//        }
+//        Wire.endTransmission();  // Stop transmitting
       }
-      Wire.endTransmission();  // Stop transmitting
-      delay(5000);
+      else{
+        Wire.beginTransmission(9); // Begin transmitting
+        for (int j = 0; j < commands.length(); j++) {
+          Wire.write(commands.charAt(j));  // Send the commands
+        }
+        Wire.endTransmission();  // Stop transmitting
+      }
     }
     else {
       commands = theinstructions.substring(7);

@@ -2,7 +2,7 @@
 #include <avr/wdt.h>
 
 void setup() {
-  Wire.begin(8);                // join i2c bus with address #8
+  Wire.begin(9);                // join i2c bus with address #8
   Wire.onReceive(receiveEvent); // register event
   //  Serial.begin(9600);
   MCUSR = 0;  // clear out any flags of prior resets.
@@ -25,7 +25,7 @@ void receiveEvent(int howMany) {
     char newitem = Wire.read();
     instructions += newitem;
   }
-  if (instructions[0] == '1') {
+  if (instructions[0] == '3') {
     parseinstructions(instructions.substring(2));
   }
 }
@@ -37,7 +37,6 @@ void parseinstructions(String instructions) {  // Parser function for each ardui
   int indice = 0;  // Indice of the array that the parser will add the next instruction to
   int i = 5;  // Indice of the instructions that the parser will start reading from
   int j;
-  //  Serial.println("Parsing!");
   do {
     j = i;
     String numSteps = "";
@@ -80,23 +79,3 @@ void stepper(int dir, int motornum) {
   digitalWrite(2 * motornum + 1, LOW);
   delay(10);
 }
-
-//void calibrate() {
-//  digitalWrite(12, HIGH);
-//  for (int j = 0; j < 300; j++) {
-//    for (int i = 1; i < 5; i++) { // Loop through each motor
-//      stepper(1, i);  // Step the motor backwards (Todo check the direction of real stepper motor)
-//    }
-//  }
-//  for (int j = 0; j < 300; j++) {
-//    for (int i = 1; i < 5; i++) { // Loop through each motor
-//      stepper(0, i);  // Step the motor backwards (Todo check the direction of real stepper motor)
-//    }
-//  }
-//  digitalWrite(12, LOW);
-//  wdt_enable(WDTO_15MS); // turn on the WatchDog and don't stroke it. RESET.
-//  for (;;) {
-//    // do nothing and wait for the eventual... reset.
-//  }
-//}
-
